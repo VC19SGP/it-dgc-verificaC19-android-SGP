@@ -98,10 +98,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         observeInitDownload()
     }
 
-        binding.qrButton.setOnClickListener(this)
-        binding.settings.setOnClickListener(this)
-        binding.scanModeButton.setOnClickListener(this)
-
     private fun observeInitDownload() {
         viewModel.initDownloadLiveData.observe(this) {
             if (it) {
@@ -184,6 +180,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private fun setOnClickListeners() {
         binding.qrButton.setOnClickListener(this)
         binding.settings.setOnClickListener(this)
+        binding.scanModeButton.setOnClickListener(this)
         binding.privacyPolicyCard.setOnClickListener {
             val browserIntent =
                 Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
