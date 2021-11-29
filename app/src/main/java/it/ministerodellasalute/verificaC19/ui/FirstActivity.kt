@@ -42,6 +42,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.BuildConfig
@@ -55,6 +56,7 @@ import it.ministerodellasalute.verificaC19sdk.data.local.PrefKeys
 import it.ministerodellasalute.verificaC19sdk.data.local.Preferences
 import it.ministerodellasalute.verificaC19sdk.data.local.PreferencesImpl
 import it.ministerodellasalute.verificaC19sdk.model.FirstViewModel
+import it.ministerodellasalute.verificaC19sdk.model.VerificationViewModel
 import it.ministerodellasalute.verificaC19sdk.util.ConversionUtility
 import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_DATE_LAST_SYNC
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
@@ -194,6 +196,13 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
         sharedPreference = getSharedPreferences("dgca.verifier.app.pref", Context.MODE_PRIVATE)
 
+        val verificationViewModel = ViewModelProvider(this)[VerificationViewModel::class.java]
+
+        verificationViewModel.scanMode.observe(this, {
+            val chosenScanMode = if (it == "3G") getString(R.string.scan_mode_3G) else getString(R.string.scan_mode_2G)
+            binding.scanModeButton.text = chosenScanMode
+        })
+
         binding.initDownload.setOnClickListener {
             if (Utility.isOnline(this)) {
                 startDownload()
@@ -252,10 +261,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             val builder = AlertDialog.Builder(this)
             builder.setTitle(getString(R.string.privacyTitle))
             builder.setMessage(getString(R.string.privacy))
-            builder.setPositiveButton(getString(R.string.next)) { dialog, which ->
+            builder.setPositiveButton(getString(R.string.next)) { _, _ ->
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
-            builder.setNegativeButton(getString(R.string.back)) { dialog, which ->
+            builder.setNegativeButton(getString(R.string.back)) { _, _ ->
             }
             val dialog = builder.create()
             dialog.show()
@@ -350,9 +359,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         startActivity(intent)
     }
 
-    private fun openSettings(showScanModeChoiceAlertDialog: Boolean) {
+    private fun openSettings() {
         val intent = Intent(this, SettingsActivity::class.java)
-        intent.putExtra("showScanModeChoiceAlertDialog", showScanModeChoiceAlertDialog);
         startActivity(intent)
     }
 
@@ -377,16 +385,21 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
         when (v?.id) {
             R.id.qrButton -> checkCameraPermission()
-            R.id.settings -> openSettings(false)
-            R.id.scan_mode_button -> openSettings(true)
+            R.id.settings -> openSettings()
+            R.id.scan_mode_button -> AlertDialogCaller.showScanModeChoiceAlertDialog(
+                this,
+                getString(R.string.label_scan_mode),
+                arrayOf(getString(R.string.scan_mode_2G), getString(R.string.scan_mode_3G)),
+                ViewModelProvider(this)[VerificationViewModel::class.java]
+            )
         }
     }
 
     private fun createNoSyncAlertDialog(alertMessage: String) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.noKeyAlertTitle))
-        builder.setMessage(alertMessage)
-        builder.setPositiveButton(getString(R.string.ok)) { dialog, which ->
+        builder.setMessage(getString(R.string.noKeyAlertMessage))
+        builder.setPositiveButton(getString(R.string.ok)) { _, _ ->
         }
         val dialog = builder.create()
         dialog.show()
@@ -397,7 +410,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         builder.setTitle(getString(R.string.updateTitle))
         builder.setMessage(getString(R.string.updateMessage))
 
-        builder.setPositiveButton(getString(R.string.updateLabel)) { dialog, which ->
+        builder.setPositiveButton(getString(R.string.updateLabel)) { _, _ ->
             openGooglePlay()
         }
         val dialog = builder.create()
