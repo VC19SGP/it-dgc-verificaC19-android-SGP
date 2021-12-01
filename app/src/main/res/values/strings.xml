@@ -105,8 +105,8 @@
     <string name="no_internet_title">Connessione internet assente</string>
     <string name="no_internet_message">Connessione internet assente. Assicurati di essere connesso alla rete e riprova.</string>
     <string name="ok_label">OK</string>
-    <string name="label_scan_mode">Tipologia Verifica</string>
-    <string name="label_scan_mode_ver">Tipologia di Verifica</string>
+    <string name="label_scan_mode">Tipologia verifica</string>
+    <string name="label_scan_mode_ver">Tipologia di verifica</string>
     <string name="scan_mode_3G_header">Verifica Base</string>
     <string name="scan_mode_2G_header">Verifica Rafforzata</string>
     <string name="scan_mode_choice">Tipologia verifica</string>
