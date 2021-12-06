@@ -443,21 +443,23 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val scanModeChoices =  arrayOf(
             getString(
                 R.string.label_alert_dialog_option,
-                getString(R.string.label_scan_mode),
                 getString(R.string.scan_mode_2G_header).substringAfter(
                     ' '
-                ).toUpperCase(Locale.ROOT)
+                ).toUpperCase(Locale.ROOT),
+                getString(R.string.scan_mode_2G)
+
             ),
             getString(
                 R.string.label_alert_dialog_option,
-                getString(R.string.label_scan_mode),
                 getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(
                     Locale.ROOT
-                )
+                ),
+                getString(R.string.scan_mode_3G)
+
             )
         )
 
-        mBuilder.setTitle(title)
+        mBuilder.setTitle(getString(R.string.label_scan_mode))
         mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
             if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
             if (which == 0) {
@@ -468,6 +470,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             dialog.dismiss()
         }
         val mDialog = mBuilder.create()
+        mDialog.setCancelable(false)
         mDialog.show()
     }
 
