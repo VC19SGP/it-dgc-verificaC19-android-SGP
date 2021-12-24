@@ -190,14 +190,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         binding.certificateValid.text = when (certStatus) {
             CertificateStatus.VALID -> getString(R.string.certificateValid)
             CertificateStatus.NOT_EU_DCC -> getString(R.string.certificateNotDCC)
-            CertificateStatus.NOT_VALID -> {
-                if (VerificaApplication.isCertificateRevoked && BuildConfig.BUILD_TYPE == "debug") {
-                    VerificaApplication.isCertificateRevoked = false
-                    getString(R.string.certificateRevoked)
-                } else {
-                    getString(R.string.certificateNonValid)
-                }
-            }
+            CertificateStatus.REVOKED -> if (isDebug()) getString(R.string.certificateRevoked) else getString(
+                R.string.certificateNonValid
+            )
+            CertificateStatus.NOT_VALID -> getString(R.string.certificateNonValid)
             CertificateStatus.TEST_NEEDED -> getString(R.string.certificateValidTestNeeded)
             CertificateStatus.NOT_VALID_YET -> getString(R.string.certificateNonValidYet)
         }
